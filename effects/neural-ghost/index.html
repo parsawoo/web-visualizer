@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Neural Ghost · Web-Visualizer</title>
+  <link rel="icon" type="image/svg+xml"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect x='2' y='2' width='5' height='5' rx='1' fill='%2319e3ff'/%3E%3Crect x='9' y='9' width='5' height='5' rx='1' fill='%2300ffb2'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="../../assets/css/theme.css" />
+  <link rel="stylesheet" href="../../assets/css/studio.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/selfie_segmentation.js" crossorigin="anonymous"></script>
+</head>
+<body class="studio" style="--accent: var(--grad-ghost); --accent-solid: #19e3ff;">
+  <div class="aurora"></div>
+  <div class="grain"></div>
+
+  <div class="topbar">
+    <a href="../../index.html" class="back-btn">← LOBBY</a>
+    <div class="studio-title">Neural <span class="accent-text">Ghost</span></div>
+    <div class="fmt-toggle">
+      <span class="lbl">Export</span>
+      <div class="switch" id="fmtSwitch">
+        <button data-fmt="webm">WEBM·빠름</button>
+        <button data-fmt="mp4">MP4·호환</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="workspace">
+    <div class="panel">
+      <div class="panel-label">1 · Source</div>
+      <div id="sourceContainer"><video id="sourceVideo" controls playsinline></video></div>
+    </div>
+    <div class="panel">
+      <div class="panel-label render">2 · Ghost Render</div>
+      <div id="renderArea">
+        <canvas id="webglCanvas"></canvas>
+        <div id="statusOverlay">
+          <div class="spinner" id="loadingSpinner" style="display:none;"></div>
+          <div id="statusText">영상과 음악을 올린 뒤<br><span class="hl">[SUMMON GHOST]</span>로 분석을 시작하세요.</div>
+          <div class="progress-bar-container" id="progressContainer"><div id="progressBar"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ui-panel">
+    <div class="top-controls">
+      <div class="control-group"><label class="ctl">AI Cutout · 누끼</label>
+        <select id="uiCutout">
+          <option value="1" selected>ON · 인물만</option>
+          <option value="0">OFF · 배경 유지</option>
+        </select>
+      </div>
+      <div class="control-group"><label class="ctl">Glitch Power</label><input type="range" id="uiGlitch" min="0" max="5" step="0.1" value="2.0"></div>
+      <div class="control-group"><label class="ctl">React Style</label>
+        <select id="uiReactMode">
+          <option value="0" selected>Brightness · 명도</option>
+          <option value="1">Color Shift · 사이버톤</option>
+          <option value="2">1-Bit Dither · 흑백</option>
+          <option value="3">4-Bit Dither · 게임보이</option>
+          <option value="4">8-Bit Gray · 레트로</option>
+          <option value="5">Pixel Break · 모자이크</option>
+          <option value="6">Flash Invert · 섬광반전</option>
+          <option value="7">Zoom Blur · 공간흡수</option>
+        </select>
+      </div>
+      <div class="control-group"><label class="ctl">EQ Signal</label><canvas id="audioVisualizer" width="150" height="42"></canvas></div>
+    </div>
+    <div class="bottom-controls">
+      <div class="control-group"><label class="ctl">1 · Video (MP4)</label><input type="file" id="visualUpload" accept="video/*" /></div>
+      <div class="control-group"><label class="ctl">2 · Audio (MP3/WAV)</label><input type="file" id="audioUpload" accept="audio/*" /></div>
+      <button class="btn" id="btnReset">Reset</button>
+      <button class="btn primary" id="btnMake" disabled>3 · Summon Ghost</button>
+      <button class="btn go" id="btnPlay" disabled>Play</button>
+      <button class="btn rec" id="btnRecord" disabled>● Export</button>
+    </div>
+  </div>
+
+  <script type="module" src="./main.js"></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+# reference clone of the original B-Visual-Studio (not published)
+_ref/
+
+# local Claude Code / preview-server config
+.claude/
+
+# OS / editor junk
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*~
