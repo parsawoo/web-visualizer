@@ -1,0 +1,218 @@
+/* ============================================================
+   Landing — intro reveal + 3D card carousel
+   ============================================================ */
+
+body.landing { height: 100vh; overflow: hidden; }
+
+/* ---------- Intro overlay ---------- */
+#intro {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: var(--bg-0);
+  transition: opacity 0.9s ease, visibility 0.9s ease;
+}
+#intro.gone { opacity: 0; visibility: hidden; pointer-events: none; }
+
+.intro-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(2.4rem, 8vw, 6.5rem);
+  letter-spacing: -0.02em;
+  line-height: 1;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(24px) scale(0.96);
+  filter: blur(14px);
+  animation: introIn 1.5s cubic-bezier(.18,.7,.2,1) forwards;
+}
+.intro-title .dash { color: var(--ink-faint); -webkit-text-fill-color: var(--ink-faint); }
+.intro-sub {
+  margin-top: 1.2rem;
+  font-family: var(--font-mono);
+  font-size: clamp(0.6rem, 1.6vw, 0.85rem);
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  opacity: 0;
+  animation: subIn 1s ease 0.7s forwards;
+}
+@keyframes introIn {
+  0%   { opacity: 0; transform: translateY(24px) scale(0.96); filter: blur(14px); }
+  55%  { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+  100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+@keyframes subIn { to { opacity: 1; } }
+
+/* ---------- Stage ---------- */
+#stage {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 3.2vh 0 4vh;
+  opacity: 0;
+  transition: opacity 1s ease 0.1s;
+}
+#stage.show { opacity: 1; }
+
+.brand-mini {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: 0.04em;
+}
+.stage-hint {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.wheel-ico {
+  display: inline-block;
+  width: 18px; height: 26px;
+  border: 1.5px solid var(--ink-faint);
+  border-radius: 10px;
+  position: relative;
+}
+.wheel-ico::after {
+  content: '';
+  position: absolute;
+  left: 50%; top: 5px;
+  width: 2px; height: 6px;
+  background: var(--ink-dim);
+  border-radius: 2px;
+  transform: translateX(-50%);
+  animation: wheelDot 1.4s ease-in-out infinite;
+}
+@keyframes wheelDot { 0%,100% { opacity: .3; top: 5px; } 50% { opacity: 1; top: 10px; } }
+
+/* ---------- Carousel ---------- */
+#carousel {
+  position: relative;
+  width: 100%;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1600px;
+  perspective-origin: 50% 45%;
+  touch-action: pan-y;
+  user-select: none;
+}
+#track {
+  position: relative;
+  width: 0; height: 0;
+  transform-style: preserve-3d;
+}
+
+.card {
+  --accent: var(--grad-matrix);
+  position: absolute;
+  top: 0; left: 0;
+  width: 300px;
+  height: 420px;
+  margin-left: -150px;
+  margin-top: -210px;
+  border-radius: 22px;
+  background: var(--glass-bg-strong);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.55s cubic-bezier(.2,.7,.2,1), opacity 0.55s ease, box-shadow .4s ease;
+  will-change: transform, opacity;
+}
+.card .accent-bar {
+  position: absolute; top: 0; left: 0; right: 0; height: 5px;
+  background-image: var(--accent);
+}
+.card .thumb {
+  position: relative;
+  height: 56%;
+  overflow: hidden;
+  background:
+    radial-gradient(120% 90% at 30% 10%, rgba(255,255,255,0.12), transparent 60%),
+    #0a0818;
+}
+.card .thumb canvas { width: 100%; height: 100%; display: block; }
+.card .meta {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  padding: 1.1rem 1.2rem 1.3rem;
+  height: 44%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background: linear-gradient(to top, rgba(6,5,13,0.96) 60%, transparent);
+}
+.card .num {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  color: var(--ink-faint);
+}
+.card .name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.45rem;
+  line-height: 1.05;
+}
+.card .name .accent-text {
+  background-image: var(--accent);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.card .tag { font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink-dim); line-height: 1.45; }
+.card .pills { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-top: auto; }
+.card .pill {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.22rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid var(--glass-border);
+  color: var(--ink-dim);
+}
+.card.is-active { box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.18); }
+.card.is-active .enter-hint { opacity: 1; transform: translateY(0); }
+.card .enter-hint {
+  position: absolute;
+  top: 1rem; right: 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.6rem;
+  border-radius: 999px;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid var(--glass-border);
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity .4s ease, transform .4s ease;
+}
+
+/* dots */
+#dots { display: flex; gap: 0.6rem; }
+#dots button {
+  width: 9px; height: 9px; border-radius: 50%;
+  border: none; padding: 0; cursor: pointer;
+  background: rgba(255,255,255,0.25);
+  transition: transform .25s ease, background .25s ease;
+}
+#dots button.on { background: var(--ink); transform: scale(1.3); }
+
+@media (max-width: 560px) {
+  .card { width: 240px; height: 340px; margin-left: -120px; margin-top: -170px; }
+}

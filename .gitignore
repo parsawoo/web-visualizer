@@ -10,3 +10,8 @@ Thumbs.db
 desktop.ini
 *.swp
 *~
+
+# node / vite
+node_modules/
+dist/
+*.local

@@ -1,0 +1,14 @@
+/* React mount layout — page content lives inside #root > .page */
+#root { width: 100%; min-height: 100vh; }
+
+.page {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* landing: #stage owns the full-height column layout (see landing.css) */
+.page.landing-page { height: 100vh; overflow: hidden; }
+.landing-page #stage { width: 100%; }

@@ -1,70 +1,65 @@
 # Web-Visualizer
 
 음악 + 영상을 올리면 **음악에 반응하는 VFX**를 입혀 영상으로 내보내는 웹 스튜디오.
-첫 화면에서 `Web-Visualizer` 인트로가 떴다 사라진 뒤, 휠/드래그/화살표로 돌리는 **3D 카드 카루셀**에서 효과를 고르고, 카드를 클릭하면 작업실로 들어갑니다.
+첫 화면에서 `Web-Visualizer` 인트로가 떴다 사라진 뒤, 휠/드래그/화살표로 돌리는 **3D 카드 카루셀**에서 효과를 골라 작업실로 들어갑니다.
 
-`parsawoo/B-Visual-Studio`의 3개 효과를 골라 **오디오 반응형**으로 재설계했습니다.
+**라이브: https://parsawoo.github.io/web-visualizer/**
+
+## 스택
+
+**Vite + React 18 + TypeScript + React Router (HashRouter)**
+
+- **셸**(라우팅·랜딩·UI 컨트롤·레이아웃)은 React 컴포넌트.
+- **렌더 엔진**(Three.js/WebGL 셰이더, Web Audio, MediaRecorder, ffmpeg.wasm)은 프레임워크-독립 명령형 모듈로, 각 효과 컴포넌트의 `useEffect`에서 마운트하고 언마운트 시 정리합니다. (canvas 작업의 표준 패턴)
+- MediaPipe / TF.js / ffmpeg.wasm은 사용 시점에 CDN `<script>`로 동적 로드 → 번들 가볍게, 정적 호스팅 호환.
 
 ## 4가지 효과
 
 | 효과 | 설명 | 핵심 기술 |
 |------|------|-----------|
 | **Audio Matrix** | 영상 픽셀이 음악(저/중/고역)에 맞춰 파티클로 분산·폭발 | Three.js Points + 셰이더 |
-| **Neural Ghost** | AI 인물 누끼 + 비트에 반응하는 글리치·디더·섬광 (8종) | MediaPipe Selfie Segmentation |
-| **Cyber Tracker** | 객체·얼굴 추적 HUD가 사운드에 맞춰 락온/맥동 *(오디오 반응 신규 추가)* | TF.js COCO-SSD + MediaPipe Holistic |
-| **ASCII Art** | 음량·고음이 커질수록 영상이 완전 ASCII로 디졸브 (베이스 글로우·고음 떨림) | Canvas 2D 셀 샘플링 + 오디오 디졸브 |
+| **Neural Ghost** | AI 인물 누끼 + 비트 반응 글리치·디더·섬광 (8종) | MediaPipe Selfie Segmentation |
+| **Cyber Tracker** | 객체·얼굴 추적 HUD가 사운드에 맞춰 락온/맥동 | TF.js COCO-SSD + MediaPipe Holistic |
+| **ASCII Art** | 음량·고음이 커질수록 영상이 완전 ASCII로 디졸브 | Canvas 2D 셀 샘플링 + 오디오 디졸브 |
 
 ## 입·출력 포맷
 
-- **업로드**: 영상 `MP4`(권장) · 음악 `MP3/WAV` (Audio Matrix는 이미지도 가능)
-- **다운로드**: 우상단 토글로 선택
-  - **WEBM · 빠름** — MediaRecorder로 즉시 저장 (브라우저 네이티브)
-  - **MP4 · 호환** — 녹화한 webm을 브라우저 안에서 `ffmpeg.wasm`(H.264/AAC)으로 변환. 모든 환경에서 `.mp4` 보장.
-    - 첫 변환 시 변환 엔진(~25MB)을 1회 내려받습니다.
-    - 변환은 영상 길이에 비례해 시간이 걸립니다(브라우저 단독 처리).
-    - 단일스레드 코어를 써서 GitHub Pages 등 정적 호스팅(COOP/COEP 헤더 없이)에서도 동작합니다.
-
-## 작업 흐름
-
-1. **영상** + **음악** 업로드
-2. **Make / Summon / Analyze** — 오디오를 프레임별로 분석(베이킹)하고, 필요한 AI 모델을 돌립니다.
-3. **Play** — 컨트롤 슬라이더를 움직이며 실시간으로 미세 조정
-4. **Export** — WEBM/MP4 토글에 맞춰 영상 + 음악이 합쳐진 결과를 다운로드
+- **업로드**: 영상 `MP4`(권장) · 음악 `MP3/WAV` (Audio Matrix·ASCII는 이미지도 가능)
+- **다운로드**: 우상단 토글 — **WEBM(빠름, 네이티브)** / **MP4(호환, ffmpeg.wasm 변환)**. MP4는 첫 사용 시 변환 엔진(~25MB)을 1회 받습니다.
 
 ## 폴더 구조
 
 ```
-index.html                  랜딩 (인트로 + 카드 카루셀)
-assets/
-  css/theme.css             디자인 시스템 (글래스 + 비비드 그라데이션)
-  css/landing.css           랜딩 전용
-  css/studio.css            효과 작업실 공통
-  js/landing.js             인트로 연출 + 카루셀 + 카드 미니 프리뷰
-  js/lib/audio-bake.js      오디오 디코드 + 프레임별 반응 데이터 베이킹
-  js/lib/exporter.js        WEBM/MP4 토글 익스포터 (ffmpeg.wasm 지연 로드)
-effects/
-  audio-matrix/  (index.html + main.js)
-  neural-ghost/  (index.html + main.js)
-  cyber-tracker/ (index.html + main.js)
-  ascii-art/     (index.html + main.js)
-_ref/                       원본 B-Visual-Studio 클론 (참고용)
+index.html              Vite 엔트리
+vite.config.ts          base: 빌드 시 /web-visualizer/, dev 시 /
+src/
+  main.tsx, App.tsx     엔트리 + 라우팅
+  styles/               theme · landing · studio · app (글래스+그라데이션)
+  components/           Aurora, Topbar
+  pages/                Landing + landingCarousel (인트로·카루셀)
+  lib/                  audioBake, exporter, loadScript, usePageChrome
+  effects/
+    AudioMatrix.tsx · NeuralGhost.tsx · CyberTracker.tsx · AsciiArt.tsx   (UI 셸)
+    engines/            *.ts   (검증된 명령형 렌더 엔진)
+.github/workflows/deploy.yml   Pages 자동 배포
+legacy/                 이전 바닐라 버전 (참고용, 빌드 미포함)
 ```
 
-## 로컬 실행
-
-ES 모듈을 쓰므로 `file://`이 아닌 **로컬 서버**로 열어야 합니다.
+## 개발 / 빌드
 
 ```bash
-python -m http.server 5500
-# http://localhost:5500/  접속
+npm install
+npm run dev      # http://localhost:5173
+npm run build    # → dist/
+npm run preview  # 빌드 결과 미리보기
 ```
 
-## GitHub Pages 배포
+## 배포
 
-저장소 루트에 그대로 올리고 Pages를 켜면 됩니다(빌드 불필요). 모든 의존성(Three.js, MediaPipe, TF.js, ffmpeg.wasm)은 CDN에서 불러옵니다.
+`main`에 push하면 **GitHub Actions**가 빌드 후 Pages에 자동 배포합니다(`.github/workflows/deploy.yml`). 빌드 불필요한 설정 변경은 없습니다.
 
 ## 알려진 한계
 
-- 녹화는 **실시간**입니다(재생 길이만큼 소요). 탭을 백그라운드로 두면 프레임이 끊길 수 있어, 녹화 중에는 탭을 활성 상태로 두세요.
-- 매우 긴 영상의 MP4 변환은 브라우저 메모리 한계로 실패할 수 있습니다 → 이 경우 자동으로 WEBM으로 저장됩니다.
-- Neural Ghost / Cyber Tracker의 AI 모델 로딩에는 네트워크가 필요합니다.
+- 녹화는 **실시간**(재생 길이만큼 소요). 녹화 중에는 탭을 활성 상태로 두세요.
+- 매우 긴 영상의 MP4 변환은 브라우저 메모리 한계로 실패 시 자동으로 WEBM 저장.
+- 데스크톱 크롬 권장(WebGL/MediaRecorder).
