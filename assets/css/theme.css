@@ -32,6 +32,7 @@
   --grad-matrix: linear-gradient(135deg, #8b5cff 0%, #ff2d95 100%);
   --grad-ghost:  linear-gradient(135deg, #19e3ff 0%, #00ffb2 100%);
   --grad-cyber:  linear-gradient(135deg, #ff2d6b 0%, #ffb03d 100%);
+  --grad-ascii:  linear-gradient(135deg, #b6ff3d 0%, #19e3ff 100%);
   --grad-brand:  linear-gradient(120deg, #19e3ff 0%, #8b5cff 45%, #ff2d95 100%);
 
   --radius: 18px;

@@ -5,13 +5,14 @@
 
 `parsawoo/B-Visual-Studio`의 3개 효과를 골라 **오디오 반응형**으로 재설계했습니다.
 
-## 3가지 효과
+## 4가지 효과
 
 | 효과 | 설명 | 핵심 기술 |
 |------|------|-----------|
 | **Audio Matrix** | 영상 픽셀이 음악(저/중/고역)에 맞춰 파티클로 분산·폭발 | Three.js Points + 셰이더 |
 | **Neural Ghost** | AI 인물 누끼 + 비트에 반응하는 글리치·디더·섬광 (8종) | MediaPipe Selfie Segmentation |
 | **Cyber Tracker** | 객체·얼굴 추적 HUD가 사운드에 맞춰 락온/맥동 *(오디오 반응 신규 추가)* | TF.js COCO-SSD + MediaPipe Holistic |
+| **ASCII Art** | 음량·고음이 커질수록 영상이 완전 ASCII로 디졸브 (베이스 글로우·고음 떨림) | Canvas 2D 셀 샘플링 + 오디오 디졸브 |
 
 ## 입·출력 포맷
 
@@ -45,6 +46,7 @@ effects/
   audio-matrix/  (index.html + main.js)
   neural-ghost/  (index.html + main.js)
   cyber-tracker/ (index.html + main.js)
+  ascii-art/     (index.html + main.js)
 _ref/                       원본 B-Visual-Studio 클론 (참고용)
 ```
 

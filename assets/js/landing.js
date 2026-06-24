@@ -21,6 +21,12 @@ const EFFECTS = [
     tag: '객체·얼굴을 추적하는 HUD가 사운드에 맞춰 맥동하는 트래커.',
     pills: ['MP4 IN/OUT', 'MUSIC', 'TRACKING'], draw: drawCyber,
   },
+  {
+    id: 'ascii-art', num: 'EFFECT 04', a: ['Ascii', 'Art'],
+    accent: 'var(--grad-ascii)',
+    tag: '음량·고음이 커질수록 영상이 완전 ASCII로 디졸브되는 효과.',
+    pills: ['MP4 IN/OUT', 'MUSIC', 'DISSOLVE'], draw: drawAscii,
+  },
 ];
 
 const track = document.getElementById('track');
@@ -234,6 +240,33 @@ function drawCyber(ctx, w, h, t) {
     ctx.moveTo(x + bw - L, y + bh); ctx.lineTo(x + bw, y + bh); ctx.lineTo(x + bw, y + bh - L);
     ctx.stroke();
   });
+}
+
+function drawAscii(ctx, w, h, t) {
+  ctx.clearRect(0, 0, w, h);
+  const b = beat(t, 2.0);
+  const ramp = ' .:-=+*#%@';
+  const cell = 11;
+  ctx.font = `${cell}px 'Space Mono', monospace`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  const cx = w / 2, cy = h * 0.5;
+  for (let y = 0; y < h; y += cell) {
+    for (let x = 0; x < w; x += cell) {
+      const d = Math.hypot(x - cx, y - cy) / (w * 0.55);
+      let br = 0.5 + 0.5 * Math.sin(d * 7 - t * 2.2);
+      br *= (0.55 + 0.45 * b);
+      const idx = Math.max(0, Math.min(ramp.length - 1, Math.floor(br * (ramp.length - 1))));
+      const ch = ramp[idx];
+      if (ch === ' ') continue;
+      const mix = x / w;
+      const r = Math.round((182 * (1 - mix) + 25 * mix) * br);
+      const g = Math.round((255 * (1 - mix) + 227 * mix) * (0.55 + 0.45 * br));
+      const bl = Math.round((61 * (1 - mix) + 255 * mix) * br);
+      ctx.fillStyle = `rgba(${r},${g},${bl},${0.45 + 0.5 * b})`;
+      ctx.fillText(ch, x + cell / 2, y + cell / 2);
+    }
+  }
 }
 
 let start = null;
